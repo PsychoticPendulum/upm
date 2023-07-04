@@ -10,7 +10,7 @@ except:
     exit(1)
 LOG.writeToFile = False
 
-
+version = "1.0.3"
 package_manager = ""
 supported_operating_systems = [
     "linux"
@@ -30,6 +30,7 @@ def Usage(exit_code):
     print(f"{UTIL.BOLD}Options:{UTIL.RESET}")
     print(f"    -h, --help        Shows this menu")
     print(f"    -r, --recheck     Prompt the user for input before continuing")
+    print(f"    -v, --version     Shows current version of upm")
     print(f"")
     print(f"{UTIL.BOLD}Actions:{UTIL.RESET}")
     print(f"    update            Refresh repositories and install all pending updates")
@@ -140,10 +141,11 @@ def UniversalPackageManager(package_manager, action, arguments):
 
 
 def main(argv):
-    short_options   = "hr"
+    short_options   = "hrv"
     long_options    = [
         "help",
-        "recheck"
+        "recheck",
+        "version"
     ]
 
     try:
@@ -154,9 +156,10 @@ def main(argv):
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             Usage(0)
-        if opt in ("-r", "--recheck"):
-            del argv[0]
-            Recheck() 
+        elif opt in ("-r", "--recheck"):
+            Recheck()
+        elif opt in ("-v", "--version"):
+            Log(LVL.INFO, f"Version v{version}")
 
     if len(args) < 3:
         Log(LVL.FAIL, f"Not enough arguments.\n\tTry running {UTIL.BOLD}upm --help{UTIL.RESET}")

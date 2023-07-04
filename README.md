@@ -8,6 +8,7 @@
 ## Options:
     -h, --help        Shows this menu
     -r, --recheck     Prompt the user for input before continuing
+    -v, --version     Shows current version of upm
 
 ## Actions:
     update            Refresh repositories and install all pending updates
