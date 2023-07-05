@@ -5,12 +5,13 @@ import sys
 import getopt
 try:
     from unilog import *
+    LOG.writeToFile = False
 except:
     print("ERROR: unilog library not installed")
     exit(1)
-LOG.writeToFile = False
 
-version = "1.0.3"
+
+version = "1.0.4"
 package_manager = ""
 supported_operating_systems = [
     "linux"
@@ -18,6 +19,7 @@ supported_operating_systems = [
 supported_package_managers = [
     "yay", "pacman", "xbps-install", "apt", "dnf"
 ]
+
 
 def Usage(exit_code):
     print(f"{UTIL.BOLD}Usage:{UTIL.RESET}")
