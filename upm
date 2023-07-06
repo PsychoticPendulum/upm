@@ -55,30 +55,32 @@ def Usage(exit_code):
     print(f"    It is a wrapper for your native package manager that is agnostic to distribution")
     print(f"")
     print(f"{UTIL.BOLD}Options:{UTIL.RESET}")
-    print(f"    -h, --help        Shows this menu")
-    print(f"    -r, --recheck     Prompt the user for input before continuing")
-    print(f"    -v, --version     Shows current version of upm")
-    print(f"    -t, --transparent Show the native command")
+    print(f"    -h, --help              Shows this menu")
+    print(f"    -r, --recheck           Prompt the user for input before continuing")
+    print(f"    -v, --version           Shows current version of upm")
+    print(f"    -t, --transparent       Show the native command")
     print(f"")
     print(f"{UTIL.BOLD}Actions:{UTIL.RESET}")
-    print(f"    update            Refresh repositories and install all pending updates")
-    print(f"    search            Search installed repositories for all packages listed in <arguments>")
-    print(f"    install           Install all packages listed in <arguments>")
-    print(f"    remove            Remove all packages listed in <arguments>")
+    print(f"    update                  Refresh repositories and install all pending updates")
+    print(f"    search                  Search installed repositories for all packages listed in <arguments>")
+    print(f"    install                 Install all packages listed in <arguments>")
+    print(f"    remove                  Remove all packages listed in <arguments>")
     print(f"")
     print(f"{UTIL.BOLD}Examples:{UTIL.RESET}")
-    print(f"    upm update        Updates all packages")
-    print(f"    upm search vim    Searches for the vim package")
-    print(f"    upm install vim   Installs the vim package")
-    print(f"    upm remove vim    Uninstalls for the vim package")
+    print(f"    upm update              Updates all packages")
+    print(f"    upm search vim          Searches for the vim package")
+    print(f"    upm install vim         Installs the vim package")
+    print(f"    upm remove vim          Uninstalls for the vim package")
     print(f"")
     print(f"{UTIL.BOLD}Supported Operating Systems:{UTIL.RESET}")
     for os in upm.sos:
-        print(f"    {os}")
+        buffer = (24 - len(os)) * " "
+        print(f"    {os}{buffer}{platform_to_os(os)}")
     print(f"")
     print(f"{UTIL.BOLD}Supported Package Managers:{UTIL.RESET}")
     for pm in upm.spm:
-        print(f"    {pm}")
+        buffer = (24 - len(pm)) * " "
+        print(f"    {pm}{buffer}{pm_to_distro(pm)}")
     exit(exit_code)
 
 
@@ -128,6 +130,27 @@ def SendCommand(command):
         print(f"{UTIL.BOLD}{command}{UTIL.RESET}")
     os.system(f"{command}")
 
+
+#	----------------------
+#	|     Conversion     |
+#	----------------------
+
+
+def platform_to_os(platform):
+    match platform:
+        case "linux":           return "Linux"
+        case "darwin":          return "macOS"
+        case _:                 return "undefined"
+
+def pm_to_distro(pm):
+    match pm:
+        case "yay":             return "Arch with AUR (Linux)"
+        case "pacman":          return "Arch base (Linux)"
+        case "apt":             return "Debian (Linux)"
+        case "dnf":             return "Fedora (Linux)"
+        case "xbps-install":    return "Void (Linux)"
+        case "brew":            return "macOS"
+        case _:                 return "undefined"
 
 #	--------------------------
 #	|     Main Functions     |
