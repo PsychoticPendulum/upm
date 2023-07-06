@@ -94,11 +94,16 @@ def DetectOS():
     upm.os = sys.platform
 
 def DetectDistro():
-    for pm in upm.spm:
-        if os.path.isfile(f"/usr/bin/{pm}") or os.path.isfile(f"/usr/local/bin/{pm}"):
-            Log(LVL.INFO, f"Package Manager detected:\t{FG.GREEN}{pm}{UTIL.RESET}")
-            upm.pm = pm
+    if upm.os == "darwin":
+        if os.path.isfile(f"/usr/local/brew"):
+            upm.pm = "brew"
             return
+    else:
+        for pm in upm.spm:
+            if os.path.isfile(f"/usr/bin/{pm}"):
+                Log(LVL.INFO, f"Package Manager detected:\t{FG.GREEN}{pm}{UTIL.RESET}")
+                upm.pm = pm
+                return
 
     Log(LVL.FAIL, "No supported package manager found.")
 
@@ -231,6 +236,5 @@ def main(argv):
 
 if __name__ == "__main__":
     if sys.version_info < (3, 10):
-        print("ERROR: Python Version 3.10 or higher expected")
-        exit(1)
+        Log(LVL.FAIL, f"Python 3.10 or higher expected.\n\tInstalled Version: {UTIL.UNDERLINE}{sys.version.split(' ')[0]}")
     main(sys.argv[1:])
