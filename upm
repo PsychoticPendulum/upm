@@ -1,5 +1,10 @@
 #! /usr/bin/env python3
 
+
+#	-------------------
+#	|     Imports     |
+#	-------------------
+
 import os
 import sys
 import getopt
@@ -11,15 +16,34 @@ except:
     exit(1)
 
 
-version = "1.0.4"
-package_manager = ""
-supported_operating_systems = [
-    "linux"
-]
-supported_package_managers = [
-    "yay", "pacman", "xbps-install", "apt", "dnf"
-]
+#	----------------------
+#	|     Base Class     |
+#	----------------------
 
+class upm:
+    
+    # VARS
+
+    version     = "1.0"
+    pacman      = "undefined"       # package manager
+    os          = "undefined"       # operating system
+    sos         = [
+        "linux"
+    ]                               # supported operating systems
+    spm         = [
+        "yay", "pacman", "apt", "dnf", "xbps-install"
+    ]                               # supported package managers
+
+    # FLAGS
+    
+    fHelp       = False
+    fVersion    = False
+    fRecheck    = False
+
+
+#	-----------------------------
+#	|     Helping Functions     |
+#	-----------------------------
 
 def Usage(exit_code):
     print(f"{UTIL.BOLD}Usage:{UTIL.RESET}")
@@ -47,35 +71,39 @@ def Usage(exit_code):
     print(f"    upm remove vim    Uninstalls for the vim package")
     print(f"")
     print(f"{UTIL.BOLD}Supported Operating Systems:{UTIL.RESET}")
-    for os in supported_operating_systems:
+    for os in upm.sos:
         print(f"    {os}")
     print(f"")
     print(f"{UTIL.BOLD}Supported Package Managers:{UTIL.RESET}")
-    for pm in supported_package_managers:
+    for pm in upm.spm:
         print(f"    {pm}")
     exit(exit_code)
 
 
+def Version():
+    print(f"upm v{upm.version}")
+
+
 def DetectOS():
-
-    if not sys.platform in supported_operating_systems:
+    if not sys.platform in upm.sos:
         Log(LVL.FAIL, f"Operating System {UTIL.UNDERLINE}{sys.platform}{UTIL.RESET} is {FG.RED}not supported{UTIL.RESET}")
-
-    Log(LVL.INFO, f"Operating System {UTIL.UNDERLINE}{sys.platform}{UTIL.RESET} is {FG.GREEN}supported{UTIL.RESET}")
-    return sys.platform
-
+    Log(LVL.INFO, f"Operating System {UTIL.UNDERLINE}{sys.platform}{UTIL.RESET} is\t{FG.GREEN}supported{UTIL.RESET}")
+    upm.os = sys.platform
 
 def DetectDistro():
-    
-    for package_manager in supported_package_managers:
-        if os.path.isfile(f"/usr/bin/{package_manager}"):
-            Log(LVL.INFO, f"Package Manager detected: {FG.YELLOW}{package_manager}{UTIL.RESET}")
-            return package_manager
+    for pm in upm.spm:
+        if os.path.isfile(f"/usr/bin/{pm}"):
+            Log(LVL.INFO, f"Package Manager detected:\t{FG.GREEN}{pm}{UTIL.RESET}")
+            upm.pm = pm
+            return
 
     Log(LVL.FAIL, "No supported package manager found.")
 
 
 def Recheck():
+    if not upm.fRecheck:
+        return
+
     answer = input("Do you want to continue? [Y/n] ").lower()
     if len(answer) == 0 or answer[0] == 'y':
         return 
@@ -83,6 +111,10 @@ def Recheck():
     Log(LVL.INFO, "Stopping execution on users wish")
     exit(0)
 
+
+#	--------------------------
+#	|     Main Functions     |
+#	--------------------------
 
 def UniversalPackageManager(package_manager, action, arguments):
     match package_manager:
@@ -136,49 +168,42 @@ def UniversalPackageManager(package_manager, action, arguments):
                     os.system(f"sudo dnf install {arguments}")
                 case "remove":
                     os.system(f"sudo dnf remove {arguents}")
-                
-                
 
     Log(LVL.INFO, "Done")
 
 
 def main(argv):
-    short_options   = "hrv"
+    short_options   = "hvr"
     long_options    = [
-        "help",
-        "recheck",
-        "version"
+        "help", "version", "recheck"
     ]
 
     try:
         opts, args = getopt.getopt(argv, short_options, long_options)
     except:
-        Log(LVL.FAIL, "Invalid command line arguments")
+        Log(LVL.FAIL, f"Invalid arguments.\n\tTry running {UTIL.BOLD}upm --help{UTIL.RESET}")
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             Usage(0)
-        elif opt in ("-r", "--recheck"):
-            Recheck()
         elif opt in ("-v", "--version"):
-            Log(LVL.INFO, f"Version v{version}")
+            Version()
+        elif opt in ("-r", "--recheck"):
+            upm.fRecheck    = True
 
-    if len(args) < 3:
+    if len(args) == 0:
         Log(LVL.FAIL, f"Not enough arguments.\n\tTry running {UTIL.BOLD}upm --help{UTIL.RESET}")
 
-    print(args)
-
     action      = args[0]
-    arguments   = "" 
+    arguments   = ""
     for argument in args[1:]:
-        arguments += f" {argument}"
+        arguments += f"{argument} "
 
-    operating_system    = DetectOS()
-    package_manager     = DetectDistro()   
-
-    UniversalPackageManager(package_manager, action, arguments)
+    DetectOS()
+    DetectDistro()
+    Recheck()
+    UniversalPackageManager(upm.pm, action, arguments)
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    exit(0)
