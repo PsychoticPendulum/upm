@@ -24,7 +24,7 @@ class upm:
     
     # VARS
 
-    version     = "1.0"
+    version     = "1.0.1"
     pacman      = "undefined"       # package manager
     os          = "undefined"       # operating system
     sos         = [
@@ -39,6 +39,7 @@ class upm:
     fHelp       = False
     fVersion    = False
     fRecheck    = False
+    fTrans      = False
 
 
 #	-----------------------------
@@ -57,6 +58,7 @@ def Usage(exit_code):
     print(f"    -h, --help        Shows this menu")
     print(f"    -r, --recheck     Prompt the user for input before continuing")
     print(f"    -v, --version     Shows current version of upm")
+    print(f"    -t, --transparent Show the native command")
     print(f"")
     print(f"{UTIL.BOLD}Actions:{UTIL.RESET}")
     print(f"    update            Refresh repositories and install all pending updates")
@@ -82,6 +84,7 @@ def Usage(exit_code):
 
 def Version():
     print(f"upm v{upm.version}")
+    exit(0)
 
 
 def DetectOS():
@@ -100,6 +103,7 @@ def DetectDistro():
     Log(LVL.FAIL, "No supported package manager found.")
 
 
+# TODO: except keyboard interrupt
 def Recheck():
     if not upm.fRecheck:
         return
@@ -112,6 +116,12 @@ def Recheck():
     exit(0)
 
 
+def SendCommand(command):
+    if upm.fTrans:
+        print(f"{UTIL.BOLD}{command}{UTIL.RESET}")
+    os.system(f"{command}")
+
+
 #	--------------------------
 #	|     Main Functions     |
 #	--------------------------
@@ -121,61 +131,61 @@ def UniversalPackageManager(package_manager, action, arguments):
         case "yay":
             match action:
                 case "update":
-                    os.system("yay -Syyu")
+                    SendCommand("yay -Syyu")
                 case "search":
-                    os.system(f"yay -Ss {arguments}")
+                    SendCommand(f"yay -Ss {arguments}")
                 case "install":
-                    os.system(f"yay -S {arguments}")
+                    SendCommand(f"yay -S {arguments}")
                 case "remove":
-                    os.system(f"yay -Rs {arguments}")
+                    SendCommand(f"yay -Rs {arguments}")
         case "pacman":
             match action:
                 case "update":
-                    os.system("sudo pacman -Syyu")
+                    SendCommand("sudo pacman -Syyu")
                 case "search":
-                    os.system(f"sudo pacman -Ss {arguments}")
+                    SendCommand(f"sudo pacman -Ss {arguments}")
                 case "install":
-                    os.system(f"sudo pacman -S {arguments}")
+                    SendCommand(f"sudo pacman -S {arguments}")
                 case "remove":
-                    os.system(f"sudo pacman -Rs {arguments}")
+                    SendCommand(f"sudo pacman -Rs {arguments}")
         case "xbps-install":
             match action:
                 case "update":
-                    os.system("sudo xbps-install -Syu")
+                    SendCommand("sudo xbps-install -Syu")
                 case "search":
-                    os.system(f"sudo xbps-query -Rs {arguments}")
+                    SendCommand(f"sudo xbps-query -Rs {arguments}")
                 case "install":
-                    os.system(f"sudo xbps-install {arguments}")
+                    SendCommand(f"sudo xbps-install {arguments}")
                 case "remove":
-                    os.system(f"sudo xbps-remove -R {arguments}")
+                    SendCommand(f"sudo xbps-remove -R {arguments}")
         case "apt":
             match action:
                 case "update":
-                    os.system("sudo apt update && sudo apt upgrade")
+                    SendCommand("sudo apt update && sudo apt upgrade")
                 case "search":
-                    os.system(f"sudo apt search {arguments}")
+                    SendCommand(f"sudo apt search {arguments}")
                 case "install":
-                    os.system(f"sudo apt install {arguments}")
+                    SendCommand(f"sudo apt install {arguments}")
                 case "remove":
-                    os.system(f"sudo apt remove {arguments}")
+                    SendCommand(f"sudo apt remove {arguments}")
         case "dnf":
             match action:
                 case "update":
-                    os.system("sudo dnf update")
+                    SendCommand("sudo dnf update")
                 case "search":
-                    os.system(f"sudo dnf search {arguments}")
+                    SendCommand(f"sudo dnf search {arguments}")
                 case "install":
-                    os.system(f"sudo dnf install {arguments}")
+                    SendCommand(f"sudo dnf install {arguments}")
                 case "remove":
-                    os.system(f"sudo dnf remove {arguents}")
+                    SendCommand(f"sudo dnf remove {arguents}")
 
     Log(LVL.INFO, "Done")
 
 
 def main(argv):
-    short_options   = "hvr"
+    short_options   = "hvrt"
     long_options    = [
-        "help", "version", "recheck"
+        "help", "version", "recheck", "transparent"
     ]
 
     try:
@@ -190,6 +200,8 @@ def main(argv):
             Version()
         elif opt in ("-r", "--recheck"):
             upm.fRecheck    = True
+        elif opt in ("-t", "--transparent"):
+            upm.fTrans      = True
 
     if len(args) == 0:
         Log(LVL.FAIL, f"Not enough arguments.\n\tTry running {UTIL.BOLD}upm --help{UTIL.RESET}")
