@@ -24,7 +24,7 @@ class upm:
     
     # VARS
 
-    version     = "1.1.1"
+    version     = "1.1.2"
     pacman      = "undefined"       # package manager
     os          = "undefined"       # operating system
     sos         = [
@@ -112,7 +112,7 @@ def Recheck():
         if len(answer) == 0 or answer[0] == 'y':
             return
     except KeyboardInterrupt:
-        print(f"{UTIL.LEFT}{UTIL.LEFT}{BG.YELLOW}{FG.BLACK}Keyboard Interrupt{UTIL.RESET}") 
+        print(f"{UTIL.LEFT}{UTIL.LEFT}  \t{FG.YELLOW}Keyboard Interrupt{UTIL.RESET}") 
 
     Log(LVL.INFO, "Stopping execution on users wish")
     exit(0)
