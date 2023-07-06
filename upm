@@ -24,7 +24,7 @@ class upm:
     
     # VARS
 
-    version     = "1.1.2"
+    version     = "1.1.3"
     pacman      = "undefined"       # package manager
     os          = "undefined"       # operating system
     sos         = [
@@ -48,7 +48,7 @@ class upm:
 
 def Usage(exit_code):
     print(f"{UTIL.BOLD}Usage:{UTIL.RESET}")
-    print(f"    upm [option] [action] [arguments]")
+    print(f"    upm [options] [action] [arguments]")
     print(f"")
     print(f"{UTIL.BOLD}Description:{UTIL.RESET}")
     print(f"    upm stands for Universal Package Manager.")
