@@ -103,14 +103,16 @@ def DetectDistro():
     Log(LVL.FAIL, "No supported package manager found.")
 
 
-# TODO: except keyboard interrupt
 def Recheck():
     if not upm.fRecheck:
         return
 
-    answer = input("Do you want to continue? [Y/n] ").lower()
-    if len(answer) == 0 or answer[0] == 'y':
-        return 
+    try:
+        answer = input("Do you want to continue? [Y/n] ").lower()
+        if len(answer) == 0 or answer[0] == 'y':
+            return
+    except KeyboardInterrupt:
+        print(f"{UTIL.LEFT}{UTIL.LEFT}{BG.YELLOW}{FG.BLACK}Keyboard Interrupt{UTIL.RESET}") 
 
     Log(LVL.INFO, "Stopping execution on users wish")
     exit(0)
