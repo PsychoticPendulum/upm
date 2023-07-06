@@ -207,7 +207,7 @@ def UniversalPackageManager(package_manager, action, arguments):
                 case "install":
                     SendCommand(f"sudo dnf install {arguments}")
                 case "remove":
-                    SendCommand(f"sudo dnf remove {arguents}")
+                    SendCommand(f"sudo dnf remove {arguments}")
         case "brew":
             match action:
                 case "update":
