@@ -97,7 +97,7 @@ def DetectOS():
 
 def DetectDistro():
     if upm.os == "darwin":
-        if os.path.isfile(f"/usr/local/brew"):
+        if os.path.isfile(f"/usr/local/bin/brew"):
             upm.pm = "brew"
             return
     else:
