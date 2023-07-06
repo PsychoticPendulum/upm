@@ -230,7 +230,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    if sys.version_info >= (3, 10):
+    if sys.version_info < (3, 10):
         print("ERROR: Python Version 3.10 or higher expected")
         exit(1)
     main(sys.argv[1:])
