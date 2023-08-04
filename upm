@@ -31,7 +31,7 @@ class upm:
         "linux", "darwin"
     ]                               # supported operating systems
     spm         = [
-        "yay", "pacman", "apt", "dnf", "xbps-install", "brew"
+        "pacman", "apt", "dnf", "xbps-install", "brew"
     ]                               # supported package managers
 
     # FLAGS
